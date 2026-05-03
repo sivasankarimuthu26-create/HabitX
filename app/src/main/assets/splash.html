@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>HabitX</title>
+    <link rel="stylesheet" href="style.css"/>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+          background: #050510;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        .splash-logo {
+          text-align: center;
+          animation: splashIn 0.8s ease forwards;
+          opacity: 0;
+        }
+        @keyframes splashIn {
+          0% { transform: scale(0.5); opacity: 0; }
+          70% { transform: scale(1.1); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .splash-icon {
+          width: 100px; height: 100px;
+          background: linear-gradient(135deg, #00d4ff, #7b2fff);
+          border-radius: 28px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 52px;
+          margin: 0 auto 20px;
+          box-shadow: 0 0 60px rgba(0,212,255,0.5);
+          animation: iconGlow 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes iconGlow {
+          from { box-shadow: 0 0 30px rgba(0,212,255,0.4); }
+          to { box-shadow: 0 0 80px rgba(0,212,255,0.8); }
+        }
+        .splash-title {
+          font-family: 'Orbitron', monospace;
+          font-size: 42px;
+          font-weight: 900;
+          letter-spacing: 6px;
+          color: #e0e8ff;
+        }
+        .splash-title span { color: #00d4ff; text-shadow: 0 0 20px #00d4ff; }
+        .splash-sub {
+          font-family: 'Rajdhani', sans-serif;
+          font-size: 13px;
+          color: rgba(180,200,255,0.6);
+          letter-spacing: 3px;
+          margin-top: 8px;
+          text-transform: uppercase;
+        }
+        .splash-loader {
+          margin-top: 50px;
+          width: 200px;
+          height: 3px;
+          background: rgba(255,255,255,0.05);
+          border-radius: 2px;
+          overflow: hidden;
+        }
+        .splash-loader-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #00d4ff, #7b2fff);
+          border-radius: 2px;
+          animation: load 2.5s ease forwards;
+          width: 0%;
+        }
+        @keyframes load {
+          0% { width: 0%; }
+          100% { width: 100%; }
+        }
+        .splash-dots {
+          margin-top: 16px;
+          font-family: 'Orbitron', monospace;
+          font-size: 11px;
+          color: rgba(0,212,255,0.6);
+          letter-spacing: 2px;
+          animation: blink 1s infinite;
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Rajdhani&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+<div class="splash-logo">
+    <div class="splash-icon">⚡</div>
+    <div class="splash-title">HABIT<span>X</span></div>
+    <div class="splash-sub">Your Future Self Starts Today</div>
+    <div class="splash-loader">
+        <div class="splash-loader-fill"></div>
+    </div>
+    <div class="splash-dots">INITIALIZING...</div>
+</div>
+
+<script>
+    // Particles
+    const pc = document.getElementById('particles');
+    for(let i=0;i<25;i++){
+      const p=document.createElement('div');
+      p.className='particle';
+      p.style.cssText=`
+        position:absolute;width:2px;height:2px;
+        background:#00d4ff;border-radius:50%;
+        left:${Math.random()*100}%;
+        animation:float ${Math.random()*15+10}s linear infinite;
+        animation-delay:${Math.random()*15}s;opacity:0.3;
+      `;
+      pc.appendChild(p);
+    }
+
+    // Redirect after 3 seconds
+    setTimeout(() => {
+      const user = localStorage.getItem('hx_current');
+      if(user) {
+        window.location.href = 'index.html';
+      } else {
+        window.location.href = 'login.html';
+      }
+    }, 3000);
+</script>
+</body>
+</html>

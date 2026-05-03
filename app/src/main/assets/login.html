@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HabitX - Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-logo .logo-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--neon), var(--neon2));
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      box-shadow: var(--glow);
+      margin: 0 auto 16px;
+      animation: logoPulse 2s infinite;
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(0,212,255,0.3); }
+      50% { box-shadow: 0 0 40px rgba(0,212,255,0.7); }
+    }
+
+    .login-logo h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 6px;
+    }
+
+    .login-logo p {
+      font-size: 13px;
+      color: var(--sub);
+      letter-spacing: 2px;
+      margin-top: 6px;
+    }
+
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 400px;
+      backdrop-filter: blur(20px);
+    }
+
+    .tab-row {
+      display: flex;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--sub);
+      font-family: 'Orbitron', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--neon), var(--neon2));
+      color: #000;
+      box-shadow: var(--glow);
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      font-size: 11px;
+      font-family: 'Orbitron', monospace;
+      color: var(--sub);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--text);
+      outline: none;
+      transition: all 0.3s;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input:focus {
+      border-color: var(--neon);
+      box-shadow: 0 0 15px rgba(0,212,255,0.15);
+    }
+
+    .form-input::placeholder { color: var(--sub); }
+
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--neon), var(--neon2));
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      box-shadow: var(--glow);
+      transition: all 0.3s;
+      margin-top: 8px;
+    }
+
+    .login-btn:hover { transform: translateY(-2px); box-shadow: 0 0 35px rgba(0,212,255,0.5); }
+
+    .error-msg {
+      color: #ff2d7b;
+      font-size: 12px;
+      text-align: center;
+      margin-top: 10px;
+      min-height: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    .divider {
+      text-align: center;
+      color: var(--sub);
+      font-size: 12px;
+      margin: 16px 0;
+      position: relative;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 38%;
+      height: 1px;
+      background: var(--card-border);
+    }
+
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+
+    .guest-btn {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      color: var(--sub);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 1px;
+    }
+
+    .guest-btn:hover { border-color: var(--neon); color: var(--neon); }
+
+    .features-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      justify-content: center;
+    }
+
+    .feature-pill {
+      font-size: 11px;
+      padding: 5px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      color: var(--sub);
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="logo-icon">⚡</div>
+      <h1>HABIT<span>X</span></h1>
+      <p>YOUR FUTURE SELF STARTS TODAY</p>
+    </div>
+
+    <div class="login-card">
+      <div class="tab-row">
+        <button class="tab-btn active" id="loginTab" onclick="switchTab('login')">LOGIN</button>
+        <button class="tab-btn" id="signupTab" onclick="switchTab('signup')">SIGN UP</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" id="loginUser" placeholder="Enter username" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="loginPass" placeholder="Enter password" />
+        </div>
+        <button class="login-btn" onclick="doLogin()">LAUNCH →</button>
+        <div class="error-msg" id="loginError"></div>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="signupForm" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="signupName" placeholder="Enter your name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-input" id="signupUser" placeholder="Choose username" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="signupPass" placeholder="Create password" />
+        </div>
+        <button class="login-btn" onclick="doSignup()">CREATE ACCOUNT →</button>
+        <div class="error-msg" id="signupError"></div>
+      </div>
+
+      <div class="divider">or</div>
+      <button class="guest-btn" onclick="guestLogin()">⚡ Continue as Guest</button>
+    </div>
+
+    <div class="features-row">
+      <span class="feature-pill">🔥 Streak Tracking</span>
+      <span class="feature-pill">📊 Analytics</span>
+      <span class="feature-pill">🤖 AI Coach</span>
+    </div>
+  </div>
+
+  <script>
+    // Particles
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 25; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+      p.style.animationDelay = (Math.random() * 15) + 's';
+      p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+      container.appendChild(p);
+    }
+
+    function switchTab(tab) {
+      document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+      document.getElementById('loginTab').className = 'tab-btn' + (tab === 'login' ? ' active' : '');
+      document.getElementById('signupTab').className = 'tab-btn' + (tab === 'signup' ? ' active' : '');
+    }
+
+    function doLogin() {
+      const user = document.getElementById('loginUser').value.trim();
+      const pass = document.getElementById('loginPass').value.trim();
+      if (!user || !pass) {
+        document.getElementById('loginError').textContent = '⚠ Please fill in all fields';
+        return;
+      }
+      const users = JSON.parse(localStorage.getItem('hx_users') || '{}');
+      if (!users[user]) {
+        document.getElementById('loginError').textContent = '⚠ Username not found';
+        return;
+      }
+      if (users[user].password !== pass) {
+        document.getElementById('loginError').textContent = '⚠ Wrong password';
+        return;
+      }
+      localStorage.setItem('hx_current', JSON.stringify({ username: user, name: users[user].name }));
+      window.location.href = 'index.html';
+    }
+
+    function doSignup() {
+      const name = document.getElementById('signupName').value.trim();
+      const user = document.getElementById('signupUser').value.trim();
+      const pass = document.getElementById('signupPass').value.trim();
+      if (!name || !user || !pass) {
+        document.getElementById('signupError').textContent = '⚠ Please fill in all fields';
+        return;
+      }
+      if (pass.length < 4) {
+        document.getElementById('signupError').textContent = '⚠ Password must be 4+ characters';
+        return;
+      }
+      const users = JSON.parse(localStorage.getItem('hx_users') || '{}');
+      if (users[user]) {
+        document.getElementById('signupError').textContent = '⚠ Username already taken';
+        return;
+      }
+      users[user] = { name, password: pass };
+      localStorage.setItem('hx_users', JSON.stringify(users));
+      localStorage.setItem('hx_current', JSON.stringify({ username: user, name }));
+      window.location.href = 'index.html';
+    }
+
+    function guestLogin() {
+      localStorage.setItem('hx_current', JSON.stringify({ username: 'guest', name: 'Guest' }));
+      window.location.href = 'index.html';
+    }
+
+    // Auto redirect if already logged in
+    if (localStorage.getItem('hx_current')) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

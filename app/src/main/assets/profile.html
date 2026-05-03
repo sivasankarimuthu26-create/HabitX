@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Profile</title>
+    <link rel="stylesheet" href="style.css"/>
+    <style>
+        .back-btn{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:10px 16px;color:var(--neon);font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-bottom:20px;width:fit-content;text-decoration:none;}
+        .avatar {width:80px;height:80px;background:linear-gradient(135deg,var(--neon),var(--neon2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;box-shadow:var(--glow);}
+        .profile-name{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;text-align:center;color:var(--text);margin-bottom:4px;}
+        .profile-user{font-size:13px;color:var(--sub);text-align:center;margin-bottom:20px;letter-spacing:1px;}
+        .stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;}
+        .stat-box{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:14px 10px;text-align:center;backdrop-filter:blur(20px);}
+        .stat-box .val{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:var(--neon);}
+        .stat-box .lbl{font-size:11px;color:var(--sub);margin-top:4px;letter-spacing:0.5px;}
+        .menu-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:all 0.3s;text-decoration:none;color:var(--text);}
+        .menu-item:hover{border-color:var(--neon);box-shadow:var(--glow);}
+        .menu-icon{font-size:20px;}
+        .menu-label{font-size:15px;font-weight:600;flex:1;}
+        .menu-arrow{color:var(--sub);font-size:18px;}
+        .logout-btn{width:100%;padding:13px;background:linear-gradient(135deg,#ff2d7b,#ff6b35);color:#fff;border:none;border-radius:12px;font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:2px;cursor:pointer;margin-top:10px;}
+    </style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+<div style="position:relative;z-index:1;padding:20px 16px 80px;">
+    <a class="back-btn" href="index.html">← BACK</a>
+
+    <div class="glass-card" style="text-align:center;margin-bottom:20px;">
+        <div class="avatar" id="avatarEmoji">👤</div>
+        <div class="profile-name" id="profileName">Loading...</div>
+        <div class="profile-user" id="profileUser">@username</div>
+        <div class="stat-grid">
+            <div class="stat-box"><div class="val" id="p-habits">0</div><div class="lbl">Habits</div></div>
+            <div class="stat-box"><div class="val" id="p-streak">0</div><div class="lbl">Best Streak</div></div>
+            <div class="stat-box"><div class="val" id="p-done">0</div><div class="lbl">Completed</div></div>
+        </div>
+    </div>
+
+    <a class="menu-item" href="achievements.html">
+        <span class="menu-icon">🏆</span>
+        <span class="menu-label">Achievements & Badges</span>
+        <span class="menu-arrow">›</span>
+    </a>
+    <a class="menu-item" href="journal.html">
+        <span class="menu-icon">📝</span>
+        <span class="menu-label">My Journal</span>
+        <span class="menu-arrow">›</span>
+    </a>
+    <div class="menu-item" onclick="toggleThemeProfile()">
+        <span class="menu-icon" id="themeIconP">🌙</span>
+        <span class="menu-label">Toggle Theme</span>
+        <span class="menu-arrow">›</span>
+    </div>
+    <div class="menu-item" onclick="clearData()">
+        <span class="menu-icon">🗑️</span>
+        <span class="menu-label">Clear All Habits</span>
+        <span class="menu-arrow">›</span>
+    </div>
+
+    <button class="logout-btn" onclick="logout()">🚪 LOGOUT</button>
+</div>
+
+<script>
+    const pc=document.getElementById('particles');
+    for(let i=0;i<20;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(Math.random()*15+10)+'s';p.style.animationDelay=(Math.random()*15)+'s';pc.appendChild(p);}
+
+    const user = JSON.parse(localStorage.getItem('hx_current')||'{}');
+    const habits = JSON.parse(localStorage.getItem('habits')||'[]');
+    const today = new Date().toISOString().slice(0,10);
+
+    document.getElementById('profileName').textContent = user.name || 'Guest';
+    document.getElementById('profileUser').textContent = '@'+(user.username||'guest');
+    document.getElementById('p-habits').textContent = habits.length;
+    document.getElementById('p-streak').textContent = habits.reduce((m,h)=>Math.max(m,h.streak||0),0);
+    document.getElementById('p-done').textContent = habits.reduce((s,h)=>(h.history||[]).length+s,0);
+
+    const avatars = ['👨‍💻','👩‍💻','🧑‍🎓','👨‍🎓','🦸','🧙'];
+    document.getElementById('avatarEmoji').textContent = avatars[Math.floor(Math.random()*avatars.length)];
+
+    if(localStorage.getItem('theme')==='light'){
+      document.body.classList.add('light');
+      document.getElementById('themeIconP').textContent='☀️';
+    }
+
+    function toggleThemeProfile(){
+      document.body.classList.toggle('light');
+      const isLight = document.body.classList.contains('light');
+      localStorage.setItem('theme', isLight?'light':'dark');
+      document.getElementById('themeIconP').textContent = isLight?'☀️':'🌙';
+    }
+
+    function clearData(){
+      if(confirm('Clear all habits? This cannot be undone!')){
+        localStorage.removeItem('habits');
+        alert('All habits cleared!');
+      }
+    }
+
+    function logout(){
+      localStorage.removeItem('hx_current');
+      window.location.href='login.html';
+    }
+</script>
+</body>
+</html>

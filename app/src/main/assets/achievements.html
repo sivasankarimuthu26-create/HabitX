@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Achievements</title>
+    <link rel="stylesheet" href="style.css"/>
+    <style>
+        .ach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+        .ach-card {
+          background: var(--card);
+          border: 1px solid var(--card-border);
+          border-radius: 16px;
+          padding: 16px 12px;
+          text-align: center;
+          backdrop-filter: blur(20px);
+          transition: all 0.3s;
+          position: relative;
+          overflow: hidden;
+        }
+        .ach-card.unlocked { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,215,0,0.2); }
+        .ach-card.locked { opacity: 0.4; filter: grayscale(1); }
+        .ach-icon { font-size: 36px; margin-bottom: 8px; }
+        .ach-name { font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: 1px; margin-bottom: 4px; }
+        .ach-desc { font-size: 11px; color: var(--sub); line-height: 1.4; }
+        .ach-badge { position: absolute; top: 8px; right: 8px; background: var(--gold); color: #000; font-size: 9px; font-family: 'Orbitron', monospace; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+        .back-btn {
+          display: flex; align-items: center; gap: 8px;
+          background: var(--card); border: 1px solid var(--card-border);
+          border-radius: 12px; padding: 10px 16px;
+          color: var(--neon); font-family: 'Orbitron', monospace;
+          font-size: 11px; font-weight: 700; letter-spacing: 1px;
+          cursor: pointer; margin-bottom: 20px; width: fit-content;
+          text-decoration: none;
+        }
+        .xp-bar-wrap { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px 20px; margin-bottom: 20px; backdrop-filter: blur(20px); }
+        .xp-label { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .xp-title { font-family: 'Orbitron', monospace; font-size: 12px; color: var(--neon); letter-spacing: 1px; }
+        .xp-val { font-family: 'Orbitron', monospace; font-size: 12px; color: var(--gold); }
+        .xp-bar { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+        .xp-fill { height: 100%; background: linear-gradient(90deg, var(--neon), var(--gold)); border-radius: 4px; transition: width 0.6s; }
+    </style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+<div style="position:relative;z-index:1;padding:20px 16px;">
+    <a class="back-btn" href="index.html">← BACK</a>
+
+    <div class="header" style="margin-bottom:20px;">
+        <div class="logo-area">
+            <div class="logo-icon">🏆</div>
+            <div>
+                <h1>ACHIEV<span>X</span></h1>
+                <p>Your Milestones & Rewards</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="xp-bar-wrap">
+        <div class="xp-label">
+            <span class="xp-title" id="levelTitle">LEVEL 1 — BEGINNER</span>
+            <span class="xp-val" id="xpVal">0 XP</span>
+        </div>
+        <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="ach-grid" id="achGrid"></div>
+</div>
+
+<script>
+    // Particles
+    const pc = document.getElementById('particles');
+    for(let i=0;i<20;i++){
+      const p=document.createElement('div');
+      p.className='particle';
+      p.style.left=Math.random()*100+'%';
+      p.style.animationDuration=(Math.random()*15+10)+'s';
+      p.style.animationDelay=(Math.random()*15)+'s';
+      pc.appendChild(p);
+    }
+
+    const habits = JSON.parse(localStorage.getItem('habits')||'[]');
+    const today = new Date().toISOString().slice(0,10);
+    const totalDone = habits.reduce((s,h)=>(h.history||[]).length+s,0);
+    const bestStreak = habits.reduce((m,h)=>Math.max(m,h.streak||0),0);
+    const totalHabits = habits.length;
+    const doneToday = habits.filter(h=>h.lastChecked===today).length;
+
+    const achievements = [
+      { icon:'🌱', name:'FIRST STEP', desc:'Add your first habit', unlocked: totalHabits>=1 },
+      { icon:'🔥', name:'ON FIRE', desc:'Reach a 3-day streak', unlocked: bestStreak>=3 },
+      { icon:'⚡', name:'WEEK WARRIOR', desc:'Complete 7 days streak', unlocked: bestStreak>=7 },
+      { icon:'💎', name:'DIAMOND', desc:'30-day streak achieved', unlocked: bestStreak>=30 },
+      { icon:'🎯', name:'FOCUSED', desc:'Add 3 habits', unlocked: totalHabits>=3 },
+      { icon:'🚀', name:'LAUNCHER', desc:'Complete 10 total habits', unlocked: totalDone>=10 },
+      { icon:'🌟', name:'STAR', desc:'Complete 50 total habits', unlocked: totalDone>=50 },
+      { icon:'👑', name:'CHAMPION', desc:'Complete all habits today', unlocked: totalHabits>0 && doneToday===totalHabits },
+      { icon:'🧠', name:'MINDFUL', desc:'Add 5 habits', unlocked: totalHabits>=5 },
+      { icon:'🏅', name:'CENTURION', desc:'100 total completions', unlocked: totalDone>=100 },
+    ];
+
+    const xp = achievements.filter(a=>a.unlocked).length * 100;
+    const level = Math.floor(xp/300)+1;
+    const levels = ['BEGINNER','EXPLORER','ACHIEVER','MASTER','LEGEND'];
+    const levelName = levels[Math.min(level-1,4)];
+    const pct = ((xp % 300)/300)*100;
+
+    document.getElementById('levelTitle').textContent = `LEVEL ${level} — ${levelName}`;
+    document.getElementById('xpVal').textContent = `${xp} XP`;
+    document.getElementById('xpFill').style.width = pct+'%';
+
+    const grid = document.getElementById('achGrid');
+    grid.innerHTML = achievements.map(a=>`
+      <div class="ach-card ${a.unlocked?'unlocked':'locked'}">
+        ${a.unlocked?'<div class="ach-badge">✓</div>':''}
+        <div class="ach-icon">${a.icon}</div>
+        <div class="ach-name">${a.name}</div>
+        <div class="ach-desc">${a.desc}</div>
+      </div>
+    `).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Habit Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<!-- Auth check -->
+<script>
+  if (!localStorage.getItem('hx_current')) {
+    window.location.href = 'login.html';
+  }
+  const currentUser = JSON.parse(localStorage.getItem('hx_current') || '{}');
+</script>
+
+<!-- Animated background particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo-area">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <h1>HABIT<span>X</span></h1>
+      <p id="welcomeMsg">Your Future Self Starts Today</p>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
+    <button class="theme-btn" onclick="logout()" title="Logout">🚪</button>
+  </div>
+</div>
+<!-- Stats Bar -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-val" id="totalHabits">0</div>
+    <div class="stat-lbl">Habits</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div class="stat-val" id="completedToday">0</div>
+    <div class="stat-lbl">Done Today</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div class="stat-val" id="bestStreak">0</div>
+    <div class="stat-lbl">Best Streak</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div class="stat-val" id="successRate">0%</div>
+    <div class="stat-lbl">Success</div>
+  </div>
+</div>
+<div style="text-align:right;margin-bottom:16px;">
+  <button class="export-btn" onclick="exportPDF()">📄 Export Report</button>
+</div>
+<!-- Add Habit -->
+<div class="add-section">
+  <div class="add-inner">
+    <input type="text" id="habitInput" placeholder="Enter new habit..." />
+    <button class="add-btn" onclick="addHabit()">
+      <span>+</span> ADD
+    </button>
+  </div>
+</div>
+
+<!-- Habit List -->
+<div id="habitList"></div>
+
+<!-- Chart -->
+<div class="glass-card">
+  <div class="card-header">
+    <span class="card-icon">📊</span>
+    <h2>Weekly Analytics</h2>
+  </div>
+  <canvas id="progressChart"></canvas>
+</div>
+
+<!-- Reminder -->
+<div class="glass-card">
+  <div class="card-header">
+    <span class="card-icon">⏰</span>
+    <h2>Smart Reminder</h2>
+  </div>
+  <div class="reminder-row">
+    <input type="time" id="reminderTime" value="08:00" />
+    <button class="neon-btn" onclick="setReminder()">ACTIVATE</button>
+  </div>
+  <p id="reminderStatus" class="reminder-status"></p>
+</div>
+
+<!-- Chatbot -->
+<div class="glass-card chat-card">
+  <div class="card-header">
+    <span class="card-icon">🤖</span>
+    <h2>AI Habit Coach</h2>
+    <div class="ai-badge">LIVE</div>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg bot">
+      <div class="bot-avatar">🤖</div>
+      <div class="msg-bubble">Hello! I'm your AI Habit Coach. Ask me anything about building better habits! 💪</div>
+    </div>
+  </div>
+  <div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Ask your coach..." onkeydown="if(event.key==='Enter') sendChat()" />
+    <button class="send-btn" onclick="sendChat()">➤</button>
+  </div>
+</div>
+
+<div style="height:40px"></div>
+<script src="sounds.js"></script>
+<script src="chart.js"></script>
+<script src="app.js" defer></script>
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <a href="index.html" class="nav-item active">
+    <span>⚡</span>
+    <span>Home</span>
+  </a>
+  <a href="journal.html" class="nav-item">
+    <span>📝</span>
+    <span>Journal</span>
+  </a>
+  <a href="achievements.html" class="nav-item">
+    <span>🏆</span>
+    <span>Badges</span>
+  </a>
+  <a href="profile.html" class="nav-item">
+    <span>👤</span>
+    <span>Profile</span>
+  </a>
+</div>
+</body>
+</html>

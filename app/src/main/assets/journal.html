@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Journal</title>
+    <link rel="stylesheet" href="style.css"/>
+    <style>
+        .back-btn {
+          display:flex;align-items:center;gap:8px;
+          background:var(--card);border:1px solid var(--card-border);
+          border-radius:12px;padding:10px 16px;
+          color:var(--neon);font-family:'Orbitron',monospace;
+          font-size:11px;font-weight:700;letter-spacing:1px;
+          cursor:pointer;margin-bottom:20px;width:fit-content;
+          text-decoration:none;
+        }
+        .journal-input {
+          width:100%;min-height:120px;
+          background:rgba(255,255,255,0.04);
+          border:1px solid var(--card-border);
+          border-radius:12px;padding:14px 16px;
+          font-size:14px;font-family:'Rajdhani',sans-serif;
+          color:var(--text);outline:none;resize:none;
+          transition:border 0.3s;letter-spacing:0.5px;
+          line-height:1.6;
+        }
+        .journal-input:focus{border-color:var(--neon);}
+        .journal-input::placeholder{color:var(--sub);}
+        .save-btn {
+          width:100%;padding:13px;margin-top:10px;
+          background:linear-gradient(135deg,var(--neon),var(--neon2));
+          color:#000;border:none;border-radius:12px;
+          font-family:'Orbitron',monospace;font-size:12px;
+          font-weight:700;letter-spacing:2px;cursor:pointer;
+          box-shadow:var(--glow);transition:all 0.3s;
+        }
+        .entry-card {
+          background:var(--card);border:1px solid var(--card-border);
+          border-radius:14px;padding:16px;margin-bottom:12px;
+          backdrop-filter:blur(20px);position:relative;
+        }
+        .entry-date {
+          font-family:'Orbitron',monospace;font-size:10px;
+          color:var(--neon);letter-spacing:1px;margin-bottom:8px;
+        }
+        .entry-mood { font-size:20px; margin-bottom:6px; }
+        .entry-text { font-size:14px;color:var(--text);line-height:1.6; }
+        .entry-delete {
+          position:absolute;top:12px;right:12px;
+          background:none;border:1px solid rgba(255,45,123,0.2);
+          color:rgba(255,45,123,0.5);width:28px;height:28px;
+          border-radius:8px;font-size:14px;cursor:pointer;
+          display:flex;align-items:center;justify-content:center;
+        }
+        .mood-row { display:flex;gap:10px;margin-bottom:12px; }
+        .mood-btn {
+          flex:1;padding:10px;background:rgba(255,255,255,0.04);
+          border:1px solid var(--card-border);border-radius:10px;
+          font-size:20px;cursor:pointer;transition:all 0.2s;text-align:center;
+        }
+        .mood-btn.selected{border-color:var(--neon);background:rgba(0,212,255,0.1);}
+        .empty-state{text-align:center;color:var(--sub);padding:30px;font-size:14px;}
+    </style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+<div style="position:relative;z-index:1;padding:20px 16px 60px;">
+    <a class="back-btn" href="index.html">← BACK</a>
+    <div class="header" style="margin-bottom:20px;">
+        <div class="logo-area">
+            <div class="logo-icon">📝</div>
+            <div>
+                <h1>JOUR<span>X</span></h1>
+                <p>Daily Learning Journal</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card" style="margin-bottom:16px;">
+        <div class="card-header"><span class="card-icon">✍️</span><h2>TODAY'S ENTRY</h2></div>
+        <div class="mood-row">
+            <button class="mood-btn" onclick="selectMood(this,'😊')">😊</button>
+            <button class="mood-btn" onclick="selectMood(this,'🔥')">🔥</button>
+            <button class="mood-btn" onclick="selectMood(this,'😴')">😴</button>
+            <button class="mood-btn" onclick="selectMood(this,'💪')">💪</button>
+            <button class="mood-btn" onclick="selectMood(this,'😤')">😤</button>
+        </div>
+        <textarea class="journal-input" id="journalText" placeholder="What did you learn today? How did your habits go?..."></textarea>
+        <button class="save-btn" onclick="saveEntry()">SAVE ENTRY ✓</button>
+    </div>
+
+    <div class="card-header" style="margin-bottom:12px;"><span class="card-icon">📚</span><h2 style="font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:2px;">PAST ENTRIES</h2></div>
+    <div id="entriesList"></div>
+</div>
+
+<script>
+    const pc=document.getElementById('particles');
+    for(let i=0;i<20;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(Math.random()*15+10)+'s';p.style.animationDelay=(Math.random()*15)+'s';pc.appendChild(p);}
+
+    let selectedMood = '📝';
+    function selectMood(btn, mood) {
+      document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedMood = mood;
+    }
+
+    function saveEntry() {
+      const text = document.getElementById('journalText').value.trim();
+      if(!text) return;
+      const entries = JSON.parse(localStorage.getItem('hx_journal')||'[]');
+      entries.unshift({
+        id: Date.now(),
+        date: new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}),
+        mood: selectedMood,
+        text
+      });
+      localStorage.setItem('hx_journal', JSON.stringify(entries));
+      document.getElementById('journalText').value = '';
+      renderEntries();
+    }
+
+    function deleteEntry(id) {
+      let entries = JSON.parse(localStorage.getItem('hx_journal')||'[]');
+      entries = entries.filter(e=>e.id!==id);
+      localStorage.setItem('hx_journal', JSON.stringify(entries));
+      renderEntries();
+    }
+
+    function renderEntries() {
+      const entries = JSON.parse(localStorage.getItem('hx_journal')||'[]');
+      const list = document.getElementById('entriesList');
+      if(!entries.length){
+        list.innerHTML='<div class="empty-state">No entries yet.<br>Write your first journal entry above! ✍️</div>';
+        return;
+      }
+      list.innerHTML = entries.map(e=>`
+        <div class="entry-card">
+          <button class="entry-delete" onclick="deleteEntry(${e.id})">×</button>
+          <div class="entry-date">${e.date}</div>
+          <div class="entry-mood">${e.mood}</div>
+          <div class="entry-text">${e.text}</div>
+        </div>
+      `).join('');
+    }
+    renderEntries();
+</script>
+</body>
+</html>
